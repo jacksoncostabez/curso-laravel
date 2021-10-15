@@ -2,6 +2,107 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('login', function () {
+    return 'Login';
+})->name('login');
+
+//Renomeando o prefixo do Controller com Route::namespace
+/*
+Route::middleware([])->group(function () {
+
+    Route::prefix('admin')->group(function () {
+
+        Route::namespace('App\Http\Controllers\Admin')->group(function () {
+
+            Route::name('admin.')->group(function () { //adiciona o prefixo admin. antes de dashboard1.
+
+                Route::get('/dashboard1', 'TesteController@teste')->name('dashboard1');
+
+                Route::get('/financeiro1', 'TesteController@teste')->name('financeiro1');
+
+                Route::get('/caixa1', 'TesteController@teste')->name('caixa1');
+
+                Route::get('/', function () {
+                    return redirect()->route('admin.dashboard1');
+                })->name('home');
+            });
+        });
+    });
+});
+*/
+
+//Forma simplificada de fazer as rotas feitas acima.
+Route::group([
+    'middleware' => [],
+    'prefix'     => 'admin',
+    'namespace'  => 'App\Http\Controllers\Admin',
+    'name'       => 'admin.'
+], function () {
+    Route::get('/dashboard1', 'TesteController@teste')->name('dashboard');
+
+    Route::get('/financeiro1', 'TesteController@financeiro')->name('financeiro');
+
+    Route::get('/caixa11010', 'TesteController@caixa')->name('caixa');
+
+    Route::get('/', function () {
+        return redirect()->route('dashboard1');
+    })->name('home');
+
+    Route::get('/testando', function () {
+        return redirect()->route('financeiro');
+    })->name('testando');
+});
+
+//Aplica middleware(['auth']) nesse grupo de rotas. Lembrando que você add ['auth'] ou 'auth'.
+//prefix('admin') - define o prefixo da url.Ex: ele add: admin/dashboard
+Route::middleware([])->group(function () {
+    Route::prefix('admin')->group(function () {
+        Route::get('/dashboard', function () {
+            return 'Home admin';
+        });
+
+        Route::get('/financeiro', function () {
+            return 'Financeiro admin';
+        });
+
+        Route::get('/caixa', function () {
+            return 'Produtos admin';
+        });
+
+        // Route::get('/', 'App\Http\Controllers\Admin\TesteController@teste');
+        //quando alguém acessar /admin essa rota redireciona para a função teste.
+    });
+});
+
+/*Aplicando o middleware('auth') em cada rota não seria vantajoso caso precisasse alterar. */
+/* 
+Route::get('/admin/dashboard', function () {
+    return 'Home admin';
+})->middleware('auth'); 
+//middleware('auth') - Só permite o acesso a essa rota quem estiver autenticado.
+//Caso o usuário não esteja autenticado ele redireciona para o login automaticamente.
+
+Route::get('/admin/financeiro', function () {
+    return 'Financeiro admin';
+})->middleware('auth');
+
+Route::get('/admin/produtos', function () {
+    return 'Produtos admin';
+})->middleware('auth');
+*/
+
+//redirecionando para o name da rota ao invés da url.
+Route::get('redirect3', function () {
+    return redirect()->route('url.name');
+});
+
+Route::get('/nome-url', function () {
+    return 'Hey hey hey';
+})->name('url.name');
+/*->name('url.name') - nome da rota -> serve para referenciar a url definida em get. Dessa forma, se você 
+precisar alterar a url no get, não precisará mexer nas demais rotas que usam essa url. Pois eles estarão 
+usando o name que dá referência a rota. */
+
 //formato de rota simples
 Route::view('/view', 'welcome');
 
@@ -13,7 +114,7 @@ Route::get('redirect1', function (){
 });
 */
 
-Route::get('redirect2', function (){
+Route::get('redirect2', function () {
     return 'Redirect 02';
 });
 
@@ -21,36 +122,36 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/contato', function (){
+Route::get('/contato', function () {
     return view('contato');
 });
 
-Route::get('/empresa', function (){
+Route::get('/empresa', function () {
     return view('site.empresa');
 });
 
-Route::post('/register', function (){
+Route::post('/register', function () {
     return '';
 });
 
 /*permite todo tipo de acesso http, ou seja, se acessar com get, post, put etc. ela vai funcionar. 
 No entanto deve ser usada com cautela pois pode botar a aplicação em risco.*/
-Route::any('/any', function (){
+Route::any('/any', function () {
     return 'Any';
 });
 
 /*Você pode especificar os tipos de verbos que pode acessar essa rota*/
-Route::match(['get','post'], 'match', function (){
+Route::match(['get', 'post'], 'match', function () {
     return 'Match';
 });
 
 //Nesse caso o parâmetro da função não precisa ser igual ao parâmetro da url
-Route::get('/categorias/{flag}', function ($parametro){
+Route::get('/categorias/{flag}', function ($parametro) {
     return "Produtos da categoria {$parametro}";
 });
 
 //Nesse caso o parâmetro {flag} precisa ser condizente com o parâmetro da função $flag. (Lembrando que o nome {flag} é opcional)
-Route::get('/categoria/{flag}/posts', function ($flag){
+Route::get('/categoria/{flag}/posts', function ($flag) {
     return "Posts da categoria {$flag}";
 });
 
