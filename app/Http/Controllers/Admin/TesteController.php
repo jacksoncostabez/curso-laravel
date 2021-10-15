@@ -9,16 +9,16 @@ class TesteController extends Controller
 {
     public function teste()
     {
-        return 'Teste Controller';
+        return 'Dashboard Controller';
     }
 
     public function caixa()
     {
-        return 'Caixa';
+        return 'Caixa Controller';
     }
 
     public function financeiro()
     {
-        return 'Financeiro';
+        return 'Financeiro Controller';
     }
 }
