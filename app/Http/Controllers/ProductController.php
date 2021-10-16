@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
     //quando retorna um array no laravel automaticamente ele vira um .json.
     public function index()
     {

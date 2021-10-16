@@ -2,31 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 
-class ProdutoController extends Controller
+class TesteController extends Controller
 {
-    protected $request;
-
-    public function __construct(Request $request)
-    {        
-        $this->request = $request;
-
-       // $this->middleware('auth'); 
-       
-       //$this->middleware('auth')->only('create');
-
-      /* $this->middleware('auth')->only([
-           'create', 'store', ''
-        ]); */
-
-        //$this->middleware('auth')->except('index'); //aplique em todos, exceto no index.
-        $this->middleware('auth')->except([
-            'index', 'show'
-        ]);
-    }
-    
     /**
      * Display a listing of the resource.
      *
@@ -34,9 +13,14 @@ class ProdutoController extends Controller
      */
     public function index()
     {
-        $produtos = ['ProdutoController1', 'ProdutoController2', 'ProdutoController3'];
+        $teste = 123;
+        $teste2 = 321;
+        $teste3 = [];
+        $produtosTeste = ['ProdutoTeste1','ProdutoTeste2','ProdutoTeste3'];
+        
+        /*return view('teste', ['teste' => $teste]);  */
 
-        return $produtos;
+        return view('admin.pages.testes.index', compact('teste', 'teste2', 'teste3', 'produtosTeste'));
     }
 
     /**
@@ -46,7 +30,7 @@ class ProdutoController extends Controller
      */
     public function create()
     {
-       //
+        return view('admin.pages.testes.create');
     }
 
     /**
@@ -57,7 +41,7 @@ class ProdutoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd('Cadastrando...');
     }
 
     /**
@@ -68,7 +52,7 @@ class ProdutoController extends Controller
      */
     public function show($id)
     {
-        echo "Detalhes do ProdutoController: {$id}";
+        
     }
 
     /**
@@ -79,7 +63,7 @@ class ProdutoController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('admin.pages.testes.edit', compact('id'));
     }
 
     /**
@@ -91,7 +75,7 @@ class ProdutoController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        dd("Editando o produto: {$id}");
     }
 
     /**

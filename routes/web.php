@@ -2,7 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::resource('teste','App\Http\Controllers\TesteController');
+
 Route::resource('produto', 'App\Http\Controllers\ProdutoController');
+//Route::resource('produto', 'App\Http\Controllers\ProdutoController')->middleware('auth');
+
+//Route::resource('produto', 'App\Http\Controllers\ProdutoController');
 
 //Essa rota substitui todas essas rotas aqui abaixo.
 Route::resource('products', 'App\Http\Controllers\ProductController');
@@ -19,7 +24,7 @@ Route::post('/products', 'App\Http\Controllers\ProductController@store')->name('
 */
 
 Route::get('login', function () {
-    return 'Login';
+    return 'Login Ok';
 })->name('login');
 
 //Renomeando o prefixo do Controller com Route::namespace
