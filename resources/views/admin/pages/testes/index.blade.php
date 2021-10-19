@@ -9,6 +9,31 @@
 
     <hr>
 
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($products as $produto)
+                <tr>
+                    <td>{{ $produto->name }}</td>
+                    <td>{{ $produto->preco }}</td>
+                    <td>
+                        <a href="">Detalhes</a>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    {{ $products->links() }} 
+    {{-- Importante usar {!! para exibir conteudo html --}}
+
+    {{--
     @component('admin.components.card')
         @slot('title')
             <h2>Titulo Card</h2>
@@ -45,8 +70,10 @@
     @else
         <p>É diferente!</p>
     @endif
+    --}}
 
     {{-- Retorna false --}}
+    {{-- 
     @unless ($teste === '123')
         <p>Primeira condition</p>
     @else
@@ -87,6 +114,7 @@
         @default
         <p>default</p>
     @endswitch
+    --}}
 
 @endsection
 

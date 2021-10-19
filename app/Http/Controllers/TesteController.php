@@ -3,7 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateProductRequest;
+use App\Models\Product;
 use Illuminate\Http\Request;
+
+/**
+ * Esse arquivo é usado pelo ProductFactory,Product eProductsSeeder para mapear a base de dados
+ * É porque eu mapeei a rota /teste para o arquivo TesteController
+ */
 
 class TesteController extends Controller
 {
@@ -14,14 +20,15 @@ class TesteController extends Controller
      */
     public function index()
     {
-        $teste = 123;
-        $teste2 = 321;
-        $teste3 = [];
-        $produtosTeste = ['ProdutoTeste1','ProdutoTeste2','ProdutoTeste3'];
+        //$products = Product::all(); // pega todos os dados
+        //$products = Product::get(); // pega todos os dados tbm
+        //$products = Product::paginate(); //tras os 15 primeiros
+        $products = Product::latest()->paginate(); //pega os últimos registros.
         
-        /*return view('teste', ['teste' => $teste]);  */
 
-        return view('admin.pages.testes.index', compact('teste', 'teste2', 'teste3', 'produtosTeste'));
+        return view('admin.pages.testes.index', [
+            'products' => $products,
+        ]);
     }
 
     /**

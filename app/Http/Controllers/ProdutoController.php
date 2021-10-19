@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
 
@@ -34,9 +35,12 @@ class ProdutoController extends Controller
      */
     public function index()
     {
-        $produtos = ['ProdutoController1', 'ProdutoController2', 'ProdutoController3'];
+       // $produtos = ['ProdutoController1', 'ProdutoController2', 'ProdutoController3'];
+       $products = Product::all();
 
-        return $produtos;
+        return view('admin.pages.testes.index', [
+            'products' => $products,
+        ]);
     }
 
     /**
