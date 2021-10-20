@@ -36,7 +36,8 @@ class ProdutoController extends Controller
     public function index()
     {
        // $produtos = ['ProdutoController1', 'ProdutoController2', 'ProdutoController3'];
-       $products = Product::all();
+       $products = Product::latest()->simplePaginate(); //pega os últimos registros.
+        
 
         return view('admin.pages.testes.index', [
             'products' => $products,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateProductRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Esse arquivo é usado pelo ProductFactory,Product eProductsSeeder para mapear a base de dados
@@ -13,6 +14,12 @@ use Illuminate\Http\Request;
 
 class TesteController extends Controller
 {
+
+    public function __construct(Request $request, Product $product)
+    {
+        $this->request = $request;
+        $this->repository = $product;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -23,7 +30,10 @@ class TesteController extends Controller
         //$products = Product::all(); // pega todos os dados
         //$products = Product::get(); // pega todos os dados tbm
         //$products = Product::paginate(); //tras os 15 primeiros
-        $products = Product::latest()->paginate(); //pega os últimos registros.
+        //$products = Product::cursorPaginate(15); //tras os 15 primeiros
+        //$products = Product::simplePaginate(); //tras os 15 primeiros
+        //$products = Product::paginate(15)->fragment('products');
+        $products = Product::latest()->simplePaginate(); //pega os últimos registros.
         
 
         return view('admin.pages.testes.index', [
@@ -49,6 +59,20 @@ class TesteController extends Controller
      */
     public function store(StoreUpdateProductRequest $request)
     {
+
+        $data = $request->only('name', 'description', 'preco');
+
+        if($request->hasFile('image') && $request->image->isValid()) {
+            $imagePath = $request->image->store('public/products');
+            $caminho = explode("/",$imagePath);
+
+            $data['image'] = "storage/products/{$caminho[2]}"; //salva o caminho da img na coluna image do db
+        }
+
+        Product::create($data);
+
+        return redirect()->route('teste.index');
+
         /*Essa é uma das formas mais simples de validar. E não é a forma recomendada porque trás muita informação
         para o controller. E ele deve ser mais simples possível! */
        
@@ -68,12 +92,15 @@ class TesteController extends Controller
         //dd($request->file('photo')->isValid()); // verifica se o arquivo é válido para upload.
         //dd($request->photo->extension()); // mostra extensão do arquivo
         //dd($request->photo->getClientOriginalName()); // retorna o nome original do arquivo.
+
+        /*
         if($request->file('photo')->isValid()) {
             //dd($request->file('photo')->store('products')); //products é a pasta onde vai ficar o arquivo storage/app/products. Ele salva com o nome padrão do arquivo
             $nameFile = $request->name . '.' . $request->photo->extension();
             //dd($request->file('photo')->storeAs('public/products', $nameFile)); //Salva o arquivo com nome personalizado dentro do diretório privado em storage/products
             dd($request->file('photo')->storeAs('public/products', $nameFile)); //Salva o arquivo com nome personalizado dentro do diretório storage/public/products
         }
+        */
     }
 
     /**
@@ -84,7 +111,14 @@ class TesteController extends Controller
      */
     public function show($id)
     {
-        
+        //$product = Product::where('id',$id)->first(); //retorna apenas um objeto específico.
+        //retorna true se encontrar o produto e false caso contrário.
+        if(!$product = Product::find($id))
+            return redirect()->back();
+
+        return view('admin.pages.testes.show', [
+            'product' => $product,
+        ]);
     }
 
     /**
@@ -95,19 +129,43 @@ class TesteController extends Controller
      */
     public function edit($id)
     {
-        return view('admin.pages.testes.edit', compact('id'));
+        //retorna true se encontrar o produto e false caso contrário.
+        if(!$product = Product::find($id))
+            return redirect()->back();
+
+        return view('admin.pages.testes.edit', compact('product'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\StoreUpdateProductRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(StoreUpdateProductRequest $request, $id)
     {
-        dd("Editando o produto: {$id}");
+        if(!$product = Product::find($id))
+            return redirect()->back();
+
+        $data = $request->all();
+
+        if($request->hasFile('image') && $request->image->isValid()) {
+
+            if($product->image && Storage::exists($product->image)) {
+                Storage::delete($product->image);
+                //dd(Storage::exists($product->image));
+            }
+
+            $imagePath = $request->image->store('public/products');
+            $caminho = explode("/",$imagePath);
+
+            $data['image'] = "storage/products/{$caminho[2]}"; //salva o caminho da img na coluna image do db
+        }
+
+        $product->update($data); //$request->all() -> pega todos os dados do formulário.
+
+        return redirect()->route('teste.index');
     }
 
     /**
@@ -118,6 +176,31 @@ class TesteController extends Controller
      */
     public function destroy($id)
     {
-        //
+        //retorna true se encontrar o produto e false caso contrário.
+        if(!$product = Product::find($id))
+            return redirect()->back();
+
+            if($product->image && Storage::exists($product->image)) {
+                Storage::delete($product->image);
+            }
+
+        $product->delete();
+
+        return redirect()->route('teste.index');
+    }
+
+    /**
+     * Search Products
+     */
+    public function search(Request $request)
+    {
+        //pega os dados filtrados para continuar mostrando mesmo quando mudar a paginação
+        $filters = $request->except('_token');
+        $products = $this->repository->search($request->filter);
+
+        return view('admin.pages.testes.index', [
+            'products' => $products,
+            'filters' => $filters,
+        ]);
     }
 }

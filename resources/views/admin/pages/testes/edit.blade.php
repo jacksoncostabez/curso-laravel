@@ -1,13 +1,12 @@
 @extends('admin.layouts.app')
 
-@section('content')
-    <h1>Editar Produto {{ $id }}</h1>
+@section('title', "Editar Produto {{ $product->name }}")
 
-    <form action="{{ route('teste.update', $id) }}" method="post">
+@section('content')
+    <h1>Editar Produto {{ $product->name }} <a href="{{ route('teste.index') }}"><<</a></h1>
+    <hr>
+    <form action="{{ route('teste.update', $product->id) }}" method="post" enctype="multipart/form-data">
         @method('PUT') {{-- o method só recebe GET/POST! Para alteração é preciso enviar o PUT --}}
-        @csrf {{-- Cria um campo com token para validar a requisição e evitar ataque --}}
-        <input type="text" name="name" placeholder="Nome: ">
-        <input type="text" name="description" placeholder="Descrição: ">
-        <button type="submit">Editar</button>
+        @include('admin.pages.testes._partials.form')
     </form>
 @endsection

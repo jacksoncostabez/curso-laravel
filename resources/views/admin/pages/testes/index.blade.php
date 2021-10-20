@@ -5,32 +5,56 @@
 @section('content')
     <h1>Exibindo os produtos</h1>
 
-    <a href="{{route('teste.create')}}">Cadastrar</a>
+    <a href="{{ route('teste.create') }}" class="btn btn-success">Cadastrar</a>
+    <hr>
+
+    <form action="{{ route('teste.search') }}" method="post" class="form form-inline">
+        @csrf
+        <div class="form-group">
+            <input type="text" name="filter" placeholder="Filtrar" class="form-control" value="{{ $filters['filter'] ?? '' }}">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-info">Pesquisar</button>
+        </div>
+    </form>
 
     <hr>
 
-    <table>
+    <table class="table table-striped ">
         <thead>
             <tr>
+                <th width="100">Imagem</th>
                 <th>Nome</th>
                 <th>Preço</th>
-                <th>Ações</th>
+                <th width="100">Ações</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($products as $produto)
                 <tr>
+                    <td>@if ($produto->image)                        
+                        <img src="{{ url("$produto->image") }}" alt="{{ $produto->name }}" style="max-width: 100px;">
+                    @endif
+                </td>
                     <td>{{ $produto->name }}</td>
                     <td>{{ $produto->preco }}</td>
                     <td>
-                        <a href="">Detalhes</a>
+                        <a href="{{ route('teste.edit', $produto->id) }}">Editar</a>
+                        <a href="{{ route('teste.show', $produto->id) }}">Detalhes</a>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
 
-    {{ $products->links() }} 
+    {{-- appends($filters) -> É para deixar a paginação funcionando no search  --}}
+    @if (isset($filters))
+        {{ $products->appends($filters)->links() }}
+    @else
+        {{ $products->links() }}
+    @endif
+
+    {{-- {{ $products->links() }}  --}}
     {{-- Importante usar {!! para exibir conteudo html --}}
 
     {{--

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::any('teste/search', 'App\Http\Controllers\TesteController@search')->name('teste.search');
 Route::resource('teste','App\Http\Controllers\TesteController');
 
 Route::resource('produto', 'App\Http\Controllers\ProdutoController');
