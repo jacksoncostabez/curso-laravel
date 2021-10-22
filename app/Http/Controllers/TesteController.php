@@ -63,10 +63,8 @@ class TesteController extends Controller
         $data = $request->only('name', 'description', 'preco');
 
         if($request->hasFile('image') && $request->image->isValid()) {
-            $imagePath = $request->image->store('public/products');
-            $caminho = explode("/",$imagePath);
-
-            $data['image'] = "storage/products/{$caminho[2]}"; //salva o caminho da img na coluna image do db
+            $imagePath = $request->image->store('products');
+           $data['image'] = $imagePath;
         }
 
         Product::create($data);
@@ -157,10 +155,9 @@ class TesteController extends Controller
                 //dd(Storage::exists($product->image));
             }
 
-            $imagePath = $request->image->store('public/products');
-            $caminho = explode("/",$imagePath);
+            $imagePath = $request->image->store('products');
 
-            $data['image'] = "storage/products/{$caminho[2]}"; //salva o caminho da img na coluna image do db
+           $data['image'] = $imagePath;
         }
 
         $product->update($data); //$request->all() -> pega todos os dados do formulário.

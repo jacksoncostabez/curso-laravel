@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-Route::any('teste/search', 'App\Http\Controllers\TesteController@search')->name('teste.search');
-Route::resource('teste','App\Http\Controllers\TesteController');
+Route::any('teste/search', 'App\Http\Controllers\TesteController@search')->name('teste.search')->middleware('auth');
+Route::resource('teste','App\Http\Controllers\TesteController')->middleware(['auth', 'check.is.admin']);
 
 Route::resource('produto', 'App\Http\Controllers\ProdutoController');
 //Route::resource('produto', 'App\Http\Controllers\ProdutoController')->middleware('auth');
@@ -24,9 +25,9 @@ Route::get('/products', 'App\Http\Controllers\ProductController@index')->name('p
 Route::post('/products', 'App\Http\Controllers\ProductController@store')->name('products.store'); //tem o mesmo nome da url do get, mas não tem problema, pois os verbos são diferentes.
 */
 
-Route::get('login', function () {
+/*Route::get('login', function () {
     return 'Login Ok';
-})->name('login');
+})->name('login'); */
 
 //Renomeando o prefixo do Controller com Route::namespace
 /*
@@ -66,9 +67,9 @@ Route::group([
 
     Route::get('/caixa1', 'TesteController@caixa')->name('caixa');
 
-    Route::get('/', function () {
+    /*Route::get('/', function () {
         return redirect()->route('dashboard');
-    })->name('home');
+    })->name('home'); */
 
     Route::get('/testando', function () {
         return redirect()->route('financeiro');
@@ -182,3 +183,8 @@ Com isso, você pode definir regras depois como: Se $idProduct == default, exibe
 Route::get('/produtos/{idProduct?}', function ($idProduct = '') {
     return "Produto(s) {$idProduct}";
 });
+
+// Auth::routes(); //Criado por Padrão
+Auth::routes(['register' => false]); //desativa a função register
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

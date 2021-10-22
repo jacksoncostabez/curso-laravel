@@ -33,7 +33,7 @@
             @foreach ($products as $produto)
                 <tr>
                     <td>@if ($produto->image)                        
-                        <img src="{{ url("$produto->image") }}" alt="{{ $produto->name }}" style="max-width: 100px;">
+                        <img src="{{ url("storage/$produto->image") }}" alt="{{ $produto->name }}" style="max-width: 100px;">
                     @endif
                 </td>
                     <td>{{ $produto->name }}</td>
